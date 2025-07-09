@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  server:
+    build: .
+    container_name: posts-api
+    ports:
+      - "8080:8080"
+
+  tester:
+    image: curlimages/curl:8.8.0
+    depends_on:
+      - server
+    working_dir: /client
+    volumes:
+      - ./client:/client
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache jq && ./test_runner.sh"]
