@@ -1,7 +1,21 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
 set -euo pipefail
 
 API=http://server:8080/posts
+
+echo "⏳ Waiting for API server to become available..."
+
+# Wait until server is ready (up to 15 seconds)
+for i in $(seq 1 5); do
+  if curl -s --head "$API" | grep "200 OK" > /dev/null; then
+    break
+  fi
+  echo "  🕒 Attempt $i: server not ready yet..."
+  sleep 3
+done
+
+echo "✅ Server is up! Starting tests..."
 
 echo "1️⃣ Creating post"
 POST_ID=$(curl -s -X POST -H "Content-Type: application/json" -d \
